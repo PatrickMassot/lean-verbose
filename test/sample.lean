@@ -147,11 +147,12 @@ begin
 end
 
 
-def croissante (u : ℕ → ℝ) := ∀ n m, n ≤ m → u n ≤ u m
+def increasing (u : ℕ → ℝ) := ∀ n m, n ≤ m → u n ≤ u m
 
-def est_borne_sup (M : ℝ) (u : ℕ → ℝ) :=
+def is_supremum (M : ℝ) (u : ℕ → ℝ) :=
 (∀ n, u n ≤ M) ∧ ∀ ε > 0, ∃ n₀, u n₀ ≥ M - ε
-example (M : ℝ) (h : est_borne_sup M u) (h' : croissante u) :
+
+example (M : ℝ) (h : is_supremum M u) (h' : increasing u) :
 sequence_tendsto u M :=
 begin
   Fix ε > 0,
