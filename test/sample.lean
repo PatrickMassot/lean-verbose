@@ -28,7 +28,7 @@ end
 
 variables (u v w : ℕ → ℝ) (l l' : ℝ)
 
--- Si u est constante de valeur l, alors u tend vers l
+-- If u is constant with value l, then u tends to l
 example : (∀ n, u n = l) → sequence_tendsto u l :=
 begin
   Assume h : ∀ (n : ℕ), u n = l, 
