@@ -15,7 +15,7 @@ def force_type (p : Sort*) (x : p) := p
 
 meta def check_name (n : name) :=
 success_if_fail (do hyp ← get_local n, skip) <|> 
-fail ("Le nom " ++ n.to_string ++ " est déjà utilisé.")
+fail ("The name " ++ n.to_string ++ " is already used.")
 
 meta def mk_mapp_pexpr_aux : expr → expr → list pexpr → tactic expr
 | fn (expr.pi n bi d b) (a::as) :=
