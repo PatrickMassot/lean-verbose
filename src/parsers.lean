@@ -43,6 +43,7 @@ precedence `unfold`: 0
 precedence `which`: 0
 precedence `becomes`: 0
 precedence `for`: 0
+precedence `contradiction`: 0
 precedence `find`: 0
 precedence `it's`: 0
 precedence `contradictory`: 0
@@ -70,7 +71,7 @@ with_desc "..." $
 
 meta def maybe_typed_ident_parser : lean.parser maybe_typed_ident :=
 do { n ← (tk "(" *> ident), pe ← (tk ":" *> texpr <* tk ")"), return (n, some pe) } <|>
-do { n ← ident, 
+do { n ← ident,
      do { pe ← (tk ":" *> texpr), pure (n, some pe) } <|> pure (n, none) }
 
 /-- Parse one or more new goals. -/
@@ -79,14 +80,14 @@ tk "it" *> tk "suffices" *> tk "to" *> tk "prove" *>  (tk "that")? *> pexpr_list
 
 meta def on_obtient_parser : lean.parser (list maybe_typed_ident) :=
 do { news ← tk "obtain" *> maybe_typed_ident_parser*,
-     news' ← (tk "such" *> tk "that" *> maybe_typed_ident_parser*) <|> pure [], 
-     pure (news ++ news') } 
+     news' ← (tk "such" *> tk "that" *> maybe_typed_ident_parser*) <|> pure [],
+     pure (news ++ news') }
 
 /-- Parse a list of consequences for `choose`. -/
 meta def on_choisit_parser : lean.parser (list maybe_typed_ident) :=
 do { news ← tk "choose" *> maybe_typed_ident_parser*,
-     news' ← (tk "such" *> tk "that" *> maybe_typed_ident_parser*) <|> pure [], 
-     pure (news ++ news') } 
+     news' ← (tk "such" *> tk "that" *> maybe_typed_ident_parser*) <|> pure [],
+     pure (news ++ news') }
 
 /-- Parse a (maybe empty) argument list. -/
 meta def applied_to_parser :  lean.parser (list pexpr) :=
@@ -126,7 +127,7 @@ with_desc "conclude by ... (applied to ...) / We apply ... (to ...) / We compute
 do { rules ← tk "replace" *> interactive.rw_rules,
      We_args.rwrite_all rules <$ tk "everywhere" <|>
      We_args.rwrite rules <$> (tk "at" *> ident)? <*> which_becomes_parser } <|>
-do { tk "contrapose", 
+do { tk "contrapose",
      (We_args.contrap ff <$ tk "simply") <|>
      pure (We_args.contrap tt) } <|>
 We_args.push_negation <$> (tk "push" *> tk "the" *> tk "negation" *> (tk "at" *> ident)?) <*> which_becomes_parser <|>
@@ -135,21 +136,21 @@ do { tk "discuss",
      We_args.discussion <$> (tk "using" *> texpr) } <|>
 do { ids ← tk "unfold" *> ident*,
      do { place ← tk "at" *> ident,
-          We_args.deplie_at ids (loc.ns [place]) <$> which_becomes_parser } <|> 
+          We_args.deplie_at ids (loc.ns [place]) <$> which_becomes_parser } <|>
      pure (We_args.deplie ids) } <|>
 do { old ← tk "rename" *> ident <* tk "to",
      new ← ident,
      do { place ← tk "at" *> ident,
-          We_args.rname old new (loc.ns [place]) <$> which_becomes_parser } <|> 
+          We_args.rname old new (loc.ns [place]) <$> which_becomes_parser } <|>
      pure (We_args.rname old new none none) } <|>
 We_args.reforml <$> (tk "reformulate" *> ident <* tk "to") <*> texpr <|>
 We_args.oubli <$> (tk "forget" *> ident*)
 
 meta def Assume_parser : lean.parser Assume_args :=
-with_desc "(that) ... / Assume for contradiction ..." $ 
-do { _ ← tk "for", _ ← tk "contradiction", 
+with_desc "(that) ... / Assume for contradiction ..." $
+do { _ ← tk "for", _ ← tk "contradiction",
      n ← ident,
-     do { _ ← tk ":", 
+     do { _ ← tk ":",
           hyp ← texpr,
           pure (Assume_args.absurd n (some hyp)) } <|>
      pure (Assume_args.absurd n none)} <|>
@@ -161,19 +162,19 @@ do n ← ident <* tk ":",
    enonce ← texpr,
    do { dem ← tk "by" *> texpr,
         args ← applied_to_parser,
-        pure (n, enonce, some (pexpr_mk_app dem args)) } <|> 
+        pure (n, enonce, some (pexpr_mk_app dem args)) } <|>
    pure (n, enonce, none)
 
 meta def Lets_parser : lean.parser Lets_args :=
 with_desc "prove ... / Let's prove that ... works / Let's prove it's contradictory." $
-do  tk "prove", 
+do  tk "prove",
      (Lets_args.recur <$> ((tk "by" *> tk "induction") *> ident) <*> (tk ":" *> texpr)) <|>
      do { t ← (tk "that")?,
-          e ← texpr, 
+          e ← texpr,
           if t.is_some then (do { t ← tk "works",
                do { _ ← (tk ":"),
                     But ← texpr,
-                    pure (Lets_args.temoin e $ some But) } <|> pure (Lets_args.temoin e none) } <|> 
+                    pure (Lets_args.temoin e $ some But) } <|> pure (Lets_args.temoin e none) } <|>
           pure (Lets_args.but e)) else pure (Lets_args.but e) }
     <|>
 (Lets_args.ex_falso <$ (tk "it's" *> tk "contradictory"))
