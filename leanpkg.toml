@@ -1,8 +1,8 @@
 [package]
 name = "verbose"
 version = "0.1"
-lean_version = "leanprover-community/lean:3.35.1"
+lean_version = "leanprover-community/lean:3.42.1"
 path = "src"
 
 [dependencies]
-mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "e7bd49f210becdb8eec70d554ba6e67f45951dbf"}
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "f0ee4c81b2f326d900690e6b5f5fcb912ded6461"}
