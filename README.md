@@ -1,5 +1,9 @@
 # Lean verbose
 
+WARNING: This project uses Lean 3 which is an obsolete version of Lean. 
+You can still use it but you are more probably looking for 
+[the Lean 4 version](https://github.com/PatrickMassot/verbose-lean4).
+
 This project provides tactics for
 [Lean](https://leanprover-community.github.io/) in a very controlled
 natural language. The original version of those tactics were written in
